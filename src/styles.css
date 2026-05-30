@@ -40,3 +40,19 @@ button { cursor: pointer; }
   .dashboard-header { flex-direction: column; align-items: flex-start; padding: 1.25rem; }
   .dashboard-content { padding: 1.25rem; }
 }
+
+.roadmap-map { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1rem; padding: 1rem; }
+.roadmap-map::before { content: ""; position: absolute; left: 8%; right: 8%; top: 50%; height: 3px; background: linear-gradient(90deg, transparent, #bfdbfe, #a7f3d0, transparent); z-index: 0; }
+.roadmap-center { position: relative; z-index: 1; grid-column: span 2; align-self: center; display: grid; min-height: 210px; place-items: center; text-align: center; border-radius: 32px; background: radial-gradient(circle at top, #ffffff, #eaf1ff); border: 2px solid #dbeafe; box-shadow: 0 18px 40px rgba(59,111,245,.13); padding: 1.25rem; }
+.roadmap-center strong { display: block; margin-top: .5rem; font-size: 1.35rem; font-weight: 950; color: #0f172a; }
+.roadmap-center small { display: block; margin-top: .35rem; font-weight: 800; color: #64748b; line-height: 1.5; }
+.roadmap-node { position: relative; z-index: 1; grid-column: span 2; border-radius: 30px; padding: 1.25rem; border: 1px solid rgba(226,232,240,.9); box-shadow: 0 10px 28px rgba(15,23,42,.07); }
+.roadmap-node-blue { background: linear-gradient(160deg, #eff6ff, #ffffff); }
+.roadmap-node-purple { background: linear-gradient(160deg, #f4f0ff, #ffffff); }
+.roadmap-node-green { background: linear-gradient(160deg, #ecfdf5, #ffffff); }
+.roadmap-node-orange { background: linear-gradient(160deg, #fff7ed, #ffffff); }
+.roadmap-node-red { background: linear-gradient(160deg, #fff1f2, #ffffff); }
+@media (max-width: 1100px) { .roadmap-map { grid-template-columns: repeat(2, minmax(0, 1fr)); } .roadmap-center, .roadmap-node { grid-column: span 1; } .roadmap-map::before { display: none; } }
+@media (max-width: 700px) { .roadmap-map { grid-template-columns: 1fr; padding: 0; } }
+
+.roadmap-node-primary { outline: 3px solid rgba(59,111,245,.28); box-shadow: 0 18px 42px rgba(59,111,245,.18); transform: translateY(-4px); }
