@@ -18,13 +18,21 @@ export interface RoadmapWeek {
   items: string[];
 }
 
+export interface RoadmapStep {
+  step: string;
+  title: string;
+  description: string;
+  actions: string[];
+}
+
 export interface RoadmapModel {
   headline: string;
   summary: string;
   centerLabel: string;
   centerDescription: string;
-  paths: RoadmapPath[];
+  selectedPath: RoadmapPath;
   previewWeeks: RoadmapWeek[];
+  staircaseSteps: RoadmapStep[];
   checkpoints: string[];
   questions: string[];
 }
@@ -87,10 +95,8 @@ function priorityWeight(result: AnalysisResult, path: RoadmapPath) {
 }
 
 export function buildRoadmapModel(result: AnalysisResult): RoadmapModel {
-  const sorted = [...basePaths]
-    .sort((a, b) => priorityWeight(result, b) - priorityWeight(result, a))
-    .map((path, index) => ({ ...path, priorityLabel: index === 0 ? '최우선' : index === 1 ? '함께 보기' : `선택지 ${index + 1}` }));
-  const top = sorted[0];
+  const sorted = [...basePaths].sort((a, b) => priorityWeight(result, b) - priorityWeight(result, a));
+  const top = { ...sorted[0], priorityLabel: '설문 결과 선정' };
   const headlineByPath: Record<RoadmapPath['id'], string> = {
     recovery: '회복을 먼저 두고 여러 갈래 중 나에게 맞는 방향을 고르는 지도',
     exam: '여러 갈래 중 나에게 맞는 방향을 고르는 지도',
@@ -101,12 +107,18 @@ export function buildRoadmapModel(result: AnalysisResult): RoadmapModel {
   };
   return {
     headline: headlineByPath[top.id],
-    summary: `${result.finalType} 결과를 바탕으로 ${top.title}을 먼저 배치했어요. 다만 하나의 결론으로 몰지 않고, 상담자와 함께 다른 경로도 비교할 수 있게 구성했습니다.`,
+    summary: `${result.finalType} 결과에서 가장 우선순위가 높은 ${top.title} 로드맵만 계단형으로 보여드려요. 각 단계는 바로 결정하라는 뜻이 아니라 상담자와 함께 속도를 조절하기 위한 안내입니다.`,
     centerLabel: top.title,
     centerDescription: top.text,
-    paths: sorted,
+    selectedPath: top,
     previewWeeks: previewWeeksByPath[top.id],
+    staircaseSteps: previewWeeksByPath[top.id].map((week, index) => ({
+      step: `${index + 1}단계`,
+      title: week.title,
+      description: `${week.week}에 집중할 핵심 단계입니다. ${top.title} 경로에 맞춰 무리하지 않는 순서로 진행합니다.`,
+      actions: week.items,
+    })),
     checkpoints: ['오늘 상태 한 문장으로 정리하기', '가장 부담되는 요인 2개 고르기', `${top.title}에 필요한 첫 행동 1개 정하기`, '상담자에게 공유할 리포트 저장하기'],
-    questions: ['지금은 회복이 먼저인가, 바로 시작 가능한 작은 행동이 있는가?', '이 경로가 부담스럽다면 옆 경로 중 더 편한 선택지는?', '가족·상담자·기관 중 누구와 먼저 공유할까?', '이번 주에 30분 안에 해볼 수 있는 행동은 무엇일까?'],
+    questions: ['지금은 회복이 먼저인가, 바로 시작 가능한 작은 행동이 있는가?', '이 단계의 속도가 부담스럽다면 무엇을 줄일 수 있을까?', '가족·상담자·기관 중 누구와 먼저 공유할까?', '이번 주에 30분 안에 해볼 수 있는 행동은 무엇일까?'],
   };
 }
