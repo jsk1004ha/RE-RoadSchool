@@ -5,11 +5,12 @@ import { supportCenters } from '../data/centers';
 describe('UI contract safeguards', () => {
   const main = readFileSync('src/main.tsx', 'utf8');
 
-  it('guards malformed stored survey answers and complete-only submit', () => {
+  it('guards malformed stored survey answers and keeps analysis action clickable for missing-answer guidance', () => {
     expect(main).toContain('function readStoredAnswers');
     expect(main).toContain('try {');
     expect(main).toContain('JSON.parse(stored)');
-    expect(main).toContain('disabled={!allAnswered}');
+    expect(main).not.toMatch(/\sdisabled=\{!allAnswered\}/);
+    expect(main).toContain('aria-disabled={!allAnswered}');
     expect(main).toContain('모든 문항에 답한 뒤 분석을 시작할 수 있습니다');
     expect(main).toContain('지역을 먼저 선택해주세요');
     expect(main).toContain('localStorage.setItem(STORAGE_KEYS.region');
